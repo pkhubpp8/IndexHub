@@ -1,63 +1,113 @@
 /* 响应式布局规则 */
 
-/* 大屏幕布局 */
+/* 大屏幕布局 (>1400px) - 左右各3列 */
 @media (min-width: 1401px) {
   .container, .global-section {
     max-width: 1400px;
   }
+  .grid {
+    gap: 16px;
+  }
 }
 
-/* 中等屏幕布局 */
+/* 中等屏幕布局 (1200px-1400px) - 左右各2列 */
 @media (max-width: 1400px) {
   .container {
-    max-width: 1200px;
+    max-width: 1200px;  /* 增加最大宽度以减少空白 */
     gap: 20px;
   }
   .grid {
-    gap: 10px;
-  }
-}
-
-/* 平板布局 */
-@media (max-width: 1100px) {
-  .container {
-    flex-direction: column;
-    gap: 0;
-    max-width: 800px;
-  }
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
-  .left > div, .right > div {
-    margin-bottom: 30px;
+  /* 调整为2列布局 */
+  .left .grid, .right .grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  #cnGrid, #usGrid, #hkGrid, #euGrid, 
-  #metalGrid, #energyGrid, #fxGrid, #cryptoGrid {
-    min-height: 160px; /* 较小的两行高度 */
+  /* 修复空白占用格问题 */
+  .grid {
+    grid-auto-rows: min-content;
+    min-height: 0 !important;
   }
 }
 
-/* 小平板布局 */
-@media (max-width: 800px) {
-  .container, .global-section {
-    max-width: 600px;
+/* 较窄屏幕布局但保持左右分栏 (900px-1200px) */
+@media (max-width: 1200px) and (min-width: 901px) {
+  .container {
+    max-width: 880px;  /* 更合适的宽度 */
+    gap: 16px;
     padding: 0 12px;
   }
-  .grid {
+  .left .grid, .right .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
-  .card {
-    height: 80px; /* 稍微降低卡片高度 */
-    padding: 10px 4px;
+}
+
+/* 取消左右分栏，使用3列布局 (600px-900px) */
+@media (max-width: 900px) and (min-width: 601px) {
+  .container {
+    flex-direction: column;
+    max-width: 800px;
+    gap: 16px;
+    padding: 0 12px;
+  }
+  .left .grid, .right .grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-auto-rows: min-content;
+    min-height: 0 !important;
+    gap: 10px;
+  }
+  .left, .right {
+    width: 100%;
+  }
+  .left > div, .right > div {
+    margin-bottom: 16px;
   }
 }
 
-/* 手机布局 */
+/* 小屏幕布局 (<=600px) - 左右各2列 */
+@media (max-width: 600px) {
+  .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 600px;
+    padding: 0 10px;
+    gap: 16px;
+  }
+  .left, .right {
+    flex: 0 0 calc(50% - 8px);
+    width: calc(50% - 8px);
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-auto-rows: min-content !important;
+    min-height: 0 !important;
+    gap: 8px;
+  }
+  .card {
+    height: 75px;
+    padding: 8px 4px;
+  }
+  .container, .global-section {
+    margin: 16px auto;
+  }
+}
+
+/* 手机布局 (<=500px) */
 @media (max-width: 500px) {
+  .container {
+    flex-direction: column;
+  }
+  .left, .right {
+    width: 100%;
+    flex: none;
+  }
   .grid {
     gap: 8px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-auto-rows: min-content !important;
+    min-height: 0 !important;
   }
   h1 {
     font-size: 1.2rem;
@@ -66,8 +116,9 @@
   h2 {
     font-size: 1rem;
   }
+  /* 调整卡片样式 */
   .card {
-    height: 70px; /* 进一步降低卡片高度 */
+    height: 70px;
     padding: 8px 4px;
   }
   .card .name {
@@ -83,19 +134,20 @@
   }
 }
 
-/* 小手机布局 */
+/* 小手机布局 (<=400px) */
 @media (max-width: 400px) {
+  /* 所有网格改为单列 */
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
   .container, .global-section {
     padding: 0 8px;
   }
   .card {
-    height: 60px; /* 单列时可以稍微降低高度 */
+    height: 60px;
   }
-  #cnGrid, #usGrid, #hkGrid, #euGrid, 
-  #metalGrid, #energyGrid, #fxGrid, #cryptoGrid {
-    min-height: auto; /* 移除最小高度限制 */
+  /* 移除最小高度限制 */
+  .grid {
+    min-height: auto !important;
   }
 }

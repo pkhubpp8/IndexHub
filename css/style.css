@@ -73,7 +73,7 @@ h1 {
   gap: 40px;
   align-items: flex-start;
   margin: 30px auto;
-  max-width: 1200px;  /* 调整为更合适的宽度 */
+  max-width: 1400px;  /* 增加最大宽度以适应大屏幕 */
   padding: 0 20px;
 }
 
@@ -81,6 +81,11 @@ h1 {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+/* 两侧内容容器基础样式 */
+.left > div, .right > div {
+  margin-bottom: 40px;
 }
 
 /* 确保左右两侧的标题和内容对齐 */
@@ -148,24 +153,34 @@ h2 {
   display: grid;
   gap: 12px;
   margin-bottom: 20px;
-  grid-template-columns: repeat(3, 1fr); /* 统一使用3列布局 */
   grid-auto-rows: 1fr; /* 自动行高，保持一致 */
 }
 
-/* 设置最小高度确保空间足够 */
-.grid {
-  min-height: 90px; /* 单行最小高度 */
+/* 大屏幕默认布局 - 左右各3列 */
+.left .grid, .right .grid {
+  grid-template-columns: repeat(3, 1fr);
 }
 
-/* 两行高度的网格 */
-#cnGrid, #usGrid, #hkGrid, #euGrid, 
-#metalGrid, #energyGrid, #fxGrid, #cryptoGrid {
-  min-height: 200px; /* 两行的最小高度 */
-}
-
-/* 单行高度的网格 */
+/* 全球指数区域始终2列 */
 #globalGrid {
+  grid-template-columns: repeat(2, 1fr);
   min-height: 90px;
+}
+
+/* 设置基础高度 */
+.grid {
+  min-height: 90px;
+}
+
+/* 两行布局的网格区域 */
+#cnGrid, #usGrid, #hkGrid, #euGrid,
+#fxGrid, #cryptoGrid {
+  min-height: 200px;
+}
+
+/* 贵金属和能源区域的高度 */
+#metalGrid, #energyGrid {
+  min-height: 200px;
 }
 
 /* 响应式布局 */

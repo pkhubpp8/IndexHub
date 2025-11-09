@@ -1,0 +1,39 @@
+/* 超小屏幕（手机）布局 */
+@media (max-width: 400px) {
+  .container, .global-section {
+    padding: 0 6px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  /* 修复空占用格问题 */
+  .grid {
+    grid-auto-rows: min-content;
+    min-height: 0 !important;
+  }
+  .card {
+    height: 80px;
+    margin: 0;
+  }
+  .card .name {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+  .card .price {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .card .change {
+    font-size: 0.8rem;
+  }
+  h1 {
+    font-size: 1.2rem;
+  }
+  h2 {
+    font-size: 1rem;
+  }
+  #refreshBtn {
+    font-size: 0.85rem;
+    padding: 4px 10px;
+  }
+}
