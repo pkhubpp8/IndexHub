@@ -50,10 +50,27 @@
 
   <div class="container">
     <div class="left">
-      <h2>贵金属</h2><div class="grid" id="metalGrid"></div>
+      <div class="header-with-more">
+        <h2>贵金属</h2>
+        <button class="more-btn" id="metalMoreBtn">查看更多</button>
+      </div>
+      <div class="grid" id="metalGrid"></div>
     </div>
     <div class="right">
       <h2>能源</h2><div class="grid" id="energyGrid"></div>
+    </div>
+
+    <!-- 贵金属详情弹窗 -->
+    <div class="modal" id="metalModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>贵金属详情</h3>
+          <button class="close-btn" id="metalModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="grid" id="metalGridFull"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -66,6 +83,7 @@
     </div>
   </div>
 
+  <script type="module" src="./js/ui/Modal.js"></script>
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>

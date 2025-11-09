@@ -5,6 +5,7 @@ import { gridManager } from './utils/gridUtils.js';
 import { formatTime } from './utils/dateUtils.js';
 import { Card } from './ui/Card.js';
 import { themeManager } from './ui/theme.js';
+import { ModalManager } from './ui/Modal.js';
 
 class App {
   constructor() {
@@ -14,6 +15,7 @@ class App {
     this.cards = new Map();
     this.isRefreshing = false;
     this.countdown = UPDATE_INTERVAL;
+    this.modalManager = new ModalManager();  // 初始化模态窗口管理器
 
     this.initialize();
   }
@@ -26,11 +28,37 @@ class App {
   }
 
   createCards() {
-    INDEX_LIST.forEach(item => {
-      const card = new Card(item);
-      gridManager.grids[item.category].appendChild(card.element);
-      this.cards.set(item.code, card);
+    // 对每个分类的数据进行分组
+    const groupedItems = INDEX_LIST.reduce((acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = [];
+      }
+      acc[item.category].push(item);
+      return acc;
+    }, {});
+
+    // 为每个分类创建卡片，限制显示数量
+    Object.entries(groupedItems).forEach(([category, items]) => {
+      const displayItems = category === 'metal' ? items.slice(0, 6) : items;
+      displayItems.forEach(item => {
+        const card = new Card(item);
+        gridManager.grids[category].appendChild(card.element);
+        this.cards.set(item.code, card);
+      });
     });
+
+    // 创建完整的贵金属卡片（用于弹窗）
+    if (groupedItems.metal?.length > 6) {
+      const metalGrid = document.getElementById('metalGridFull');
+      if (metalGrid) {
+        groupedItems.metal.forEach(item => {
+          const card = new Card(item);
+          metalGrid.appendChild(card.element);
+          this.cards.set(item.code + '_full', card);
+        });
+      }
+    }
+
     gridManager.updatePlaceholders();
   }
 
@@ -79,19 +107,26 @@ class App {
   updateUI(data) {
     this.lastUpdateEl.textContent = `更新时间：${formatTime(new Date())}`;
 
-    INDEX_LIST.forEach(item => {
-      const card = this.cards.get(item.code);
-      const rawData = data[item.code];
-      if (card) {
-        try {
-          const parsedData = marketService.parseIndexData(rawData, item.category);
+    // 更新所有卡片，包括主视图和弹窗中的卡片
+    for (const [code, card] of this.cards) {
+      // 处理完整视图中的卡片（去除_full后缀）
+      const baseCode = code.endsWith('_full') ? code.replace('_full', '') : code;
+      const rawData = data[baseCode];
+
+      try {
+        // 找到对应的配置项以获取category
+        const config = INDEX_LIST.find(item => item.code === baseCode);
+        if (config && rawData) {
+          const parsedData = marketService.parseIndexData(rawData, config.category);
           card.update(parsedData);
-        } catch (error) {
-          console.error(`Failed to update ${item.name}:`, error);
+        } else {
           card.setError();
         }
+      } catch (error) {
+        console.error(`Failed to update card ${code}:`, error);
+        card.setError();
       }
-    });
+    }
   }
 }
 

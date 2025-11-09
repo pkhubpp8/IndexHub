@@ -7,3 +7,10 @@
 .left > div, .right > div {
   margin-bottom: 40px;
 }
+
+/* 弹窗中的网格样式 */
+#metalGridFull {
+  grid-template-columns: repeat(4, 1fr);  /* 弹窗中使用4列布局 */
+  gap: 20px;
+  margin-top: 20px;
+}

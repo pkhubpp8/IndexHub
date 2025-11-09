@@ -28,12 +28,12 @@ export const INDEX_LIST = [
   { name: "法国CAC40", code: "b_CAC", category: "eu" },
   { name: "意大利富时MIB", code: "b_FTSEMIB", category: "eu" },
 
-  // 贵金属
+  // 贵金属 - 现货与外盘
   { name: "伦敦金", code: "hf_XAU", category: "metal" },
   { name: "伦敦银", code: "hf_XAG", category: "metal" },
-  { name: "伦铜", code: "hf_CAD", category: "metal" },
   { name: "纽约金", code: "hf_GC", category: "metal" },
   { name: "纽约银", code: "hf_SI", category: "metal" },
+  { name: "伦铜", code: "hf_CAD", category: "metal" },
   { name: "美铜", code: "hf_HG", category: "metal" },
   { name: "黄金连续", code: "nf_AU0", category: "metal" },
 

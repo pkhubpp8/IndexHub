@@ -40,10 +40,20 @@ class MarketService {
         break;
       case "metal":
       case "energy":
-        price = parseFloat(p[0]) || 0;
-        const prev = parseFloat(p[7]) || 0;
-        change = price - prev;
-        percent = prev ? (change / prev) * 100 : 0;
+        // 处理期货数据格式（nf_前缀）
+        if (p[0] && p[0].includes('连续')) {
+          price = parseFloat(p[7]) || 0;      // 最新价
+          const prev = parseFloat(p[2]) || 0;  // 昨结算
+          change = price - prev;
+          percent = prev ? (change / prev) * 100 : 0;
+        }
+        // 处理现货数据格式（hf_前缀）
+        else {
+          price = parseFloat(p[0]) || 0;
+          const prev = parseFloat(p[7]) || 0;
+          change = price - prev;
+          percent = prev ? (change / prev) * 100 : 0;
+        }
         break;
       case "fx":
         price = parseFloat(p[1]) || 0;
