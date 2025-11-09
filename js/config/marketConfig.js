@@ -1,6 +1,4 @@
-const PROXY = "https://sse-index.pkokp8.workers.dev/";
-
-const INDEX_LIST = [
+export const INDEX_LIST = [
   // 中国
   { name: "上证指数", code: "s_sh000001", category: "cn" },
   { name: "深证成指", code: "s_sz399001", category: "cn" },

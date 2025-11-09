@@ -73,7 +73,7 @@ h1 {
   gap: 40px;
   align-items: flex-start;
   margin: 30px auto;
-  max-width: 1600px;
+  max-width: 1200px;  /* 调整为更合适的宽度 */
   padding: 0 20px;
 }
 
@@ -91,8 +91,35 @@ h1 {
   margin-top: 0;
 }
 
-.left > div, .right > div {
-  margin-bottom: 40px; /* 增加板块之间的间距 */
+/* 匹配高度的容器对 */
+.left > div:nth-child(2),
+.right > div:nth-child(2) {
+  min-height: 240px; /* 中国指数和港股指数区域 */
+  margin-bottom: 40px;
+}
+
+.left > div:nth-child(4),
+.right > div:nth-child(4) {
+  min-height: 240px; /* 美国指数和欧洲指数区域 */
+  margin-bottom: 40px;
+}
+
+.left > div:nth-child(6),
+.right > div:nth-child(6) {
+  min-height: 240px; /* 外汇和加密货币区域 */
+  margin-bottom: 40px;
+}
+
+/* 为每个标题-内容组合创建独立容器 */
+.content-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* 标题和网格容器间距一致 */
+h2 + .grid {
+  margin-top: 16px;
 }
 
 .container.bottom {
@@ -116,24 +143,118 @@ h2 {
   text-align: left;
 }
 
-/* 网格布局 */
+/* 网格布局 - 基础样式 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 20px;
-  min-height: 180px; /* 确保至少有2行的高度 */
+  grid-template-columns: repeat(3, 1fr); /* 统一使用3列布局 */
+  grid-auto-rows: 1fr; /* 自动行高，保持一致 */
 }
 
-/* 响应式 */
+/* 设置最小高度确保空间足够 */
+.grid {
+  min-height: 90px; /* 单行最小高度 */
+}
+
+/* 两行高度的网格 */
+#cnGrid, #usGrid, #hkGrid, #euGrid, 
+#metalGrid, #energyGrid, #fxGrid, #cryptoGrid {
+  min-height: 200px; /* 两行的最小高度 */
+}
+
+/* 单行高度的网格 */
+#globalGrid {
+  min-height: 90px;
+}
+
+/* 响应式布局 */
+@media (min-width: 1401px) {
+  .container, .global-section {
+    max-width: 1400px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .container {
+    gap: 20px;
+  }
+  .grid {
+    gap: 10px;
+  }
+  .card {
+    padding: 12px 4px;
+  }
+}
+
 @media (max-width: 1100px) {
-  .container { flex-direction: column; gap: 10px; }
+  .container {
+    flex-direction: column;
+    gap: 0;
+    max-width: 800px;
+  }
+  .grid {
+    gap: 12px;
+  }
+  /* 调整列数 */
+  #cnGrid, #euGrid, #fxGrid, #cryptoGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  #metalGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .left > div, .right > div {
+    min-height: auto !important;
+    margin-bottom: 30px;
+  }
+  .global-section {
+    max-width: 800px;
+  }
 }
+
 @media (max-width: 800px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .container, .global-section {
+    max-width: 600px;
+    padding: 0 12px;
+  }
+  /* 调整列数 */
+  #cnGrid, #euGrid, #metalGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  #fxGrid, #cryptoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
+
 @media (max-width: 500px) {
-  .grid { grid-template-columns: repeat(1, 1fr); }
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  h1 {
+    font-size: 1.2rem;
+    margin-top: 60px;
+  }
+  h2 {
+    font-size: 1rem;
+  }
+  .card {
+    padding: 10px 4px;
+  }
+  .card .name {
+    font-size: 0.85rem;
+  }
+  .card .price {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+  .container, .global-section {
+    padding: 0 8px;
+  }
 }
 
 /* 卡片样式 */
@@ -143,13 +264,13 @@ h2 {
   padding: 14px 6px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  min-height: 70px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 90px; /* 固定高度 */
 }
 
-.card:hover {
+.card:not(.placeholder):hover {
   transform: translateY(-2px);
   box-shadow: 0 3px 10px rgba(0,0,0,0.12);
 }
@@ -176,12 +297,18 @@ h2 {
 .price.up, .change.up { color: #d93025; }
 .price.down, .change.down { color: #137333; }
 
-/* 占位符 */
+/* 占位符样式 */
 .card.placeholder {
   background: transparent;
+  border: 2px dashed rgba(0, 0, 0, 0.1); /* 微妙的虚线边框 */
   box-shadow: none;
-  visibility: hidden;
+  visibility: visible; /* 改为可见 */
+  opacity: 0.3; /* 透明度降低 */
   pointer-events: none;
+}
+
+body.dark .card.placeholder {
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* 夜间模式 */

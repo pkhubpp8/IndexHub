@@ -1,0 +1,101 @@
+/* 响应式布局规则 */
+
+/* 大屏幕布局 */
+@media (min-width: 1401px) {
+  .container, .global-section {
+    max-width: 1400px;
+  }
+}
+
+/* 中等屏幕布局 */
+@media (max-width: 1400px) {
+  .container {
+    max-width: 1200px;
+    gap: 20px;
+  }
+  .grid {
+    gap: 10px;
+  }
+}
+
+/* 平板布局 */
+@media (max-width: 1100px) {
+  .container {
+    flex-direction: column;
+    gap: 0;
+    max-width: 800px;
+  }
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .left > div, .right > div {
+    margin-bottom: 30px;
+  }
+  #cnGrid, #usGrid, #hkGrid, #euGrid, 
+  #metalGrid, #energyGrid, #fxGrid, #cryptoGrid {
+    min-height: 160px; /* 较小的两行高度 */
+  }
+}
+
+/* 小平板布局 */
+@media (max-width: 800px) {
+  .container, .global-section {
+    max-width: 600px;
+    padding: 0 12px;
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .card {
+    height: 80px; /* 稍微降低卡片高度 */
+    padding: 10px 4px;
+  }
+}
+
+/* 手机布局 */
+@media (max-width: 500px) {
+  .grid {
+    gap: 8px;
+  }
+  h1 {
+    font-size: 1.2rem;
+    margin-top: 60px;
+  }
+  h2 {
+    font-size: 1rem;
+  }
+  .card {
+    height: 70px; /* 进一步降低卡片高度 */
+    padding: 8px 4px;
+  }
+  .card .name {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+  .card .price {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .card .change {
+    font-size: 0.8rem;
+  }
+}
+
+/* 小手机布局 */
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .container, .global-section {
+    padding: 0 8px;
+  }
+  .card {
+    height: 60px; /* 单列时可以稍微降低高度 */
+  }
+  #cnGrid, #usGrid, #hkGrid, #euGrid, 
+  #metalGrid, #energyGrid, #fxGrid, #cryptoGrid {
+    min-height: auto; /* 移除最小高度限制 */
+  }
+}
