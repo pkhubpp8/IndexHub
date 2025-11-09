@@ -1,3 +1,4 @@
+/* 基础样式 */
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: #f5f7fa;
@@ -6,9 +7,15 @@ body {
   padding: 20px;
 }
 
-h1 { margin-bottom: 10px; }
-h2 { margin: 30px 0 10px 0; }
+h1 { 
+  margin-bottom: 10px; 
+}
 
+h2 { 
+  margin: 30px 0 10px 0; 
+}
+
+/* 网格布局 */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -16,6 +23,7 @@ h2 { margin: 30px 0 10px 0; }
   margin-bottom: 20px;
 }
 
+/* 卡片样式 */
 .card {
   background: white;
   border-radius: 12px;
@@ -24,15 +32,40 @@ h2 { margin: 30px 0 10px 0; }
   transition: transform 0.2s;
 }
 
-.card:hover { transform: translateY(-2px); }
+.card:hover { 
+  transform: translateY(-2px); 
+}
 
-.name { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
-.price { font-size: 22px; font-weight: bold; }
-.change { font-size: 14px; margin-top: 4px; }
+/* 指数信息 */
+.name { 
+  font-size: 16px; 
+  font-weight: bold; 
+  margin-bottom: 4px; 
+}
+
+.price { 
+  font-size: 22px; 
+  font-weight: bold; 
+}
+
+.change { 
+  font-size: 14px; 
+  margin-top: 4px; 
+}
+
+/* 默认红涨绿跌 */
 .up { color: #d60000; }
 .down { color: #009944; }
 
-#refreshBar { margin: 10px 0; }
+/* 切换模式：红跌绿涨 */
+.color-reverse .up { color: #009944; }
+.color-reverse .down { color: #d60000; }
+
+/* 刷新栏 */
+#refreshBar { 
+  margin: 10px 0; 
+}
+
 #refreshBtn {
   padding: 6px 14px;
   border: none;
@@ -42,5 +75,34 @@ h2 { margin: 30px 0 10px 0; }
   cursor: pointer;
 }
 
-#countdown { margin-left: 12px; color: #666; }
-#lastUpdate { margin-top: 4px; font-size: 12px; color: #888; }
+/* 颜色切换按钮 */
+#colorToggleBtn {
+  position: fixed;        /* 固定在页面 */
+  top: 16px;              /* 距离顶部16px */
+  right: 16px;            /* 距离右边16px */
+  padding: 6px 10px;      /* 小巧按钮 */
+  font-size: 14px;
+  border: none;
+  border-radius: 50%;     /* 圆形按钮 */
+  background: rgba(0, 0, 0, 0.15); /* 半透明低调 */
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 1000;          /* 保证在最上层 */
+}
+
+#colorToggleBtn:hover {
+  background: rgba(0, 0, 0, 0.35);
+  transform: scale(1.1);  /* 悬停略微放大 */
+}
+
+#countdown { 
+  margin-left: 12px; 
+  color: #666; 
+}
+
+#lastUpdate { 
+  margin-top: 4px; 
+  font-size: 12px; 
+  color: #888; 
+}
