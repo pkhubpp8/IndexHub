@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全球主要指数实时行情</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <h1>🌏 全球主要指数实时行情</h1>
+
+  <div id="refreshBar">
+    <button id="refreshBtn">🔁 立即刷新</button>
+    <span id="countdown">60 秒后自动刷新</span>
+  </div>
+  <div id="lastUpdate">更新时间：--</div>
+
+  <h2>中国指数</h2><div class="grid" id="cnGrid"></div>
+  <h2>美国指数</h2><div class="grid" id="usGrid"></div>
+  <h2>港股指数</h2><div class="grid" id="hkGrid"></div>
+  <h2>欧洲指数</h2><div class="grid" id="euGrid"></div>
+  <h2>贵金属 / 能源</h2><div class="grid" id="hfGrid"></div>
+  <h2>外汇</h2><div class="grid" id="fxGrid"></div>
+  <h2>加密货币</h2><div class="grid" id="cryptoGrid"></div>
+  <h2>全球 / 新兴市场</h2><div class="grid" id="globalGrid"></div>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/market.js"></script>
+</body>
+</html>
