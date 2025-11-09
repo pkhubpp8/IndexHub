@@ -8,9 +8,9 @@ export const INDEX_LIST = [
   { name: "科创50", code: "s_sh000688", category: "cn" },
 
   // 美国
-  { name: "纳斯达克", code: "int_nasdaq", category: "us" },
-  { name: "道琼斯", code: "int_dji", category: "us" },
-  { name: "标普500", code: "int_sp500", category: "us" },
+  { name: "纳斯达克", code: "gb_ixic", category: "us" },
+  { name: "道琼斯", code: "gb_$dji", category: "us" },
+  { name: "标普500", code: "gb_$inx", category: "us" },
 
   // 亚洲
   { name: "日经225", code: "znb_NKY", category: "asia" },
@@ -57,6 +57,6 @@ export const INDEX_LIST = [
   { name: "XRP/USD", code: "btc_btcxrpusd", category: "crypto" },
 
   // 全球
-  { name: "MSCI世界指数", code: "int_msci_world", category: "global" },
-  { name: "MSCI新兴市场", code: "int_msci_em", category: "global" }
+  { name: "占位1", code: "s_sh000002", category: "global" },
+  { name: "占位2", code: "s_sh000003", category: "global" }
 ];

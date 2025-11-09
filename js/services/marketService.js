@@ -27,11 +27,10 @@ class MarketService {
     let price = 0, change = 0, percent = 0;
 
     switch (category) {
-      case "cn":
-      case "eu":
-        price = parseFloat(p[1]) || 0;
-        change = parseFloat(p[2]) || 0;
-        percent = parseFloat(p[3]) || 0;
+      case "us":
+        price = parseFloat(p[1]) || 0;       // 当前指数
+        change = parseFloat(p[4]) || 0;      // 涨跌额
+        percent = parseFloat(p[2]) || 0;     // 涨跌百分比
         break;
       case "hk":
         price = parseFloat(p[2]) || 0;
@@ -62,8 +61,8 @@ class MarketService {
         percent = prevFX ? (change / prevFX) * 100 : 0;
         break;
       case "crypto":
-        price = parseFloat(p[3]) || 0;
-        const open = parseFloat(p[7]) || price;
+        price = parseFloat(p[8]) || 0;
+        const open = parseFloat(p[5]) || price;
         change = price - open;
         percent = open ? (change / open) * 100 : 0;
         break;
