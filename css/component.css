@@ -104,10 +104,18 @@ h1 {
   margin-top: 70px;
   font-size: 1.4rem;
 }
-#colorToggleBtn {
+/* 容器固定在右上角 */
+#topRightBtns {
   position: fixed;
   top: 16px;
   right: 16px;
+  display: flex;
+  gap: 8px; /* 按钮间距 */
+  z-index: 1000; /* 确保在最上层 */
+}
+
+/* 按钮通用样式 */
+#topRightBtns button {
   background: #0078d7;
   border: none;
   color: #fff;
@@ -117,8 +125,12 @@ h1 {
   cursor: pointer;
   font-size: 18px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#colorToggleBtn:hover {
+
+#topRightBtns button:hover {
   background: #005fa3;
 }
 #refreshBar {
