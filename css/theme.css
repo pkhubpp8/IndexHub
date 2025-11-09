@@ -17,6 +17,10 @@ body.dark .card {
   box-shadow: none;
 }
 
+body.dark .card .name {
+  color: #fff;  /* 修改为白色 */
+}
+
 /* 涨跌颜色模式：红涨绿跌 */
 body.red-green .price.up,
 body.red-green .change.up { color: #ff4d4d; }
