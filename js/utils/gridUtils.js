@@ -3,8 +3,9 @@ export class GridManager {
     // 获取所有网格容器
     this.grids = {
       cn: document.getElementById("cnGrid"),
-      us: document.getElementById("usGrid"),
+      asia: document.getElementById("asiaGrid"),
       hk: document.getElementById("hkGrid"),
+      us: document.getElementById("usGrid"),
       eu: document.getElementById("euGrid"),
       metal: document.getElementById("metalGrid"),
       energy: document.getElementById("energyGrid"),
@@ -15,9 +16,10 @@ export class GridManager {
 
     // 定义每个区域需要的行数（2行或1行）
     this.gridRows = {
-      cn: 2,    // 中国指数：4个，需要2行
-      us: 2,    // 美国指数：3个，需要2行以对齐
+      cn: 2,    // A股指数：6个，需要2行
+      asia: 2,  // 亚洲指数：3个，需要2行
       hk: 2,    // 港股指数：2个，需要2行以对齐
+      us: 2,    // 美国指数：3个，需要2行以对齐
       eu: 2,    // 欧洲指数：4个，需要2行
       metal: 2, // 贵金属：5个，需要2行
       energy: 2,// 能源：2个，需要2行以对齐

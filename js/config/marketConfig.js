@@ -2,6 +2,8 @@ export const INDEX_LIST = [
   // 中国
   { name: "上证指数", code: "s_sh000001", category: "cn" },
   { name: "深证成指", code: "s_sz399001", category: "cn" },
+  { name: "沪深300", code: "s_sh000300", category: "cn" },
+  { name: "北证50", code: "s_bj899050", category: "cn" },
   { name: "创业板指", code: "s_sz399006", category: "cn" },
   { name: "科创50", code: "s_sh000688", category: "cn" },
 
@@ -10,9 +12,15 @@ export const INDEX_LIST = [
   { name: "道琼斯", code: "int_dji", category: "us" },
   { name: "标普500", code: "int_sp500", category: "us" },
 
+  // 亚洲
+  { name: "日经225", code: "znb_NKY", category: "asia" },
+  { name: "首尔综合指数", code: "znb_KOSPI", category: "asia" },
+  { name: "台湾加权指数", code: "znb_TWJQ", category: "asia" },
+
   // 港股
   { name: "恒生指数", code: "hkHSI", category: "hk" },
   { name: "恒生科技指数", code: "hkHSTECH", category: "hk" },
+  { name: "恒生中国企业指数", code: "hkHSCEI", category: "hk" },
 
   // 欧洲
   { name: "英国富时100", code: "b_UKX", category: "eu" },
