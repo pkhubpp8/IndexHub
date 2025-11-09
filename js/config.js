@@ -1,8 +1,7 @@
-// js/config.js
 const PROXY = "https://sse-index.pkokp8.workers.dev/";
 
 const INDEX_LIST = [
-  // A股
+  // 中国
   { name: "上证指数", code: "s_sh000001", category: "cn" },
   { name: "深证成指", code: "s_sz399001", category: "cn" },
   { name: "创业板指", code: "s_sz399006", category: "cn" },
@@ -23,14 +22,16 @@ const INDEX_LIST = [
   { name: "法国CAC40", code: "b_CAC", category: "eu" },
   { name: "意大利富时MIB", code: "b_FTSEMIB", category: "eu" },
 
-  // 贵金属 / 能源
-  { name: "伦敦金", code: "hf_XAU", category: "hf" },
-  { name: "伦敦银", code: "hf_XAG", category: "hf" },
-  { name: "纽约金", code: "hf_GC", category: "hf" },
-  { name: "纽约银", code: "hf_SI", category: "hf" },
-  { name: "黄金连续", code: "nf_AU0", category: "hf" },
-  { name: "WTI纽约原油", code: "hf_CL", category: "hf" },
-  { name: "布伦特原油", code: "hf_OIL", category: "hf" },
+  // 贵金属
+  { name: "伦敦金", code: "hf_XAU", category: "metal" },
+  { name: "伦敦银", code: "hf_XAG", category: "metal" },
+  { name: "纽约金", code: "hf_GC", category: "metal" },
+  { name: "纽约银", code: "hf_SI", category: "metal" },
+  { name: "黄金连续", code: "nf_AU0", category: "metal" },
+
+  // 能源
+  { name: "WTI纽约原油", code: "hf_CL", category: "energy" },
+  { name: "布伦特原油", code: "hf_OIL", category: "energy" },
 
   // 外汇
   { name: "美元指数", code: "DINIW", category: "fx" },
@@ -39,14 +40,14 @@ const INDEX_LIST = [
   { name: "欧元美元", code: "EURUSD", category: "fx" },
   { name: "美元日元", code: "USDJPY", category: "fx" },
   { name: "英镑美元", code: "GBPUSD", category: "fx" },
-  
+
   // 加密货币
-  { name: "比特币/USD", code: "btc_btcbtcusd", category: "crypto" },
-  { name: "ETH/USD", code: "btc_btcethusd", category: "crypto" },
-  { name: "SOL/USD", code: "btc_btcsolusd", category: "crypto" },
-  { name: "BNB/USD", code: "btc_btcbnbusd", category: "crypto" },
+  { name: "比特币/USD", code: "btc_btcbtcusd", category: "crypto" }, 
+  { name: "ETH/USD", code: "btc_btcethusd", category: "crypto" }, 
+  { name: "SOL/USD", code: "btc_btcsolusd", category: "crypto" }, 
+  { name: "BNB/USD", code: "btc_btcbnbusd", category: "crypto" }, 
   { name: "XRP/USD", code: "btc_btcxrpusd", category: "crypto" },
-    
+
   // 全球
   { name: "MSCI世界指数", code: "int_msci_world", category: "global" },
   { name: "MSCI新兴市场", code: "int_msci_em", category: "global" }

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-  <button id="colorToggleBtn">🔄</button> <!-- 仅图标 -->
+  <button id="colorToggleBtn">🔄</button>
   <h1>🌏 全球主要指数实时行情</h1>
 
   <div id="refreshBar">
@@ -16,14 +16,39 @@
   </div>
   <div id="lastUpdate">更新时间：--</div>
 
-  <h2>中国指数</h2><div class="grid" id="cnGrid"></div>
-  <h2>美国指数</h2><div class="grid" id="usGrid"></div>
-  <h2>港股指数</h2><div class="grid" id="hkGrid"></div>
-  <h2>欧洲指数</h2><div class="grid" id="euGrid"></div>
-  <h2>贵金属 / 能源</h2><div class="grid" id="hfGrid"></div>
-  <h2>外汇</h2><div class="grid" id="fxGrid"></div>
-  <h2>加密货币</h2><div class="grid" id="cryptoGrid"></div>
-  <h2>全球 / 新兴市场</h2><div class="grid" id="globalGrid"></div>
+  <div class="container">
+    <!-- 左侧 -->
+    <div class="left">
+      <h2>中国指数</h2><div class="grid" id="cnGrid"></div>
+      <h2>美国指数</h2><div class="grid" id="usGrid"></div>
+      <h2>外汇</h2><div class="grid" id="fxGrid"></div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="right">
+      <h2>港股指数</h2><div class="grid" id="hkGrid"></div>
+      <h2>欧洲指数</h2><div class="grid" id="euGrid"></div>
+      <h2>加密货币</h2><div class="grid" id="cryptoGrid"></div>
+    </div>
+  </div>
+
+  <!-- 下方部分 -->
+  <div class="container bottom">
+    <!-- 左侧 -->
+    <div class="left">
+      <h2>贵金属</h2><div class="grid" id="metalGrid"></div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="right">
+      <h2>能源</h2><div class="grid" id="energyGrid"></div>
+    </div>
+  </div>
+
+  <!-- 全球市场部分 -->
+  <div class="global-section">
+    <h2>全球 / 新兴市场</h2><div class="grid" id="globalGrid"></div>
+  </div>
 
   <script src="./js/config.js"></script>
   <script src="./js/market.js"></script>

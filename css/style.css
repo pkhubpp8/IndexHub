@@ -1,108 +1,207 @@
-/* 基础样式 */
+/* =============================
+   style.css（左右分栏布局 + 每行6列）
+   2025-11
+   ============================= */
+
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   background: #f5f7fa;
   color: #333;
+  margin: 0;
+  padding: 0;
   text-align: center;
-  padding: 20px;
 }
 
-h1 { 
-  margin-bottom: 10px; 
+/* 切换按钮 */
+#colorToggleBtn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: #0078d7;
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-h2 { 
-  margin: 30px 0 10px 0; 
+#colorToggleBtn:hover {
+  background: #005fa3;
+}
+
+h1 {
+  margin-top: 70px;
+  font-size: 1.4rem;
+}
+
+#refreshBar {
+  margin: 10px auto;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+
+#refreshBtn {
+  background: #0078d7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+#refreshBtn:hover {
+  background: #0064b0;
+}
+
+#lastUpdate, #countdown {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 5px 0;
+}
+
+/* ====== 主布局 ====== */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: flex-start;
+  margin: 30px auto;
+  max-width: 1600px;
+  padding: 0 20px;
+}
+
+.left, .right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 确保左右两侧的标题和内容对齐 */
+.left h2, .right h2 {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+.left > div, .right > div {
+  margin-bottom: 40px; /* 增加板块之间的间距 */
+}
+
+.container.bottom {
+  margin: 40px auto;
+}
+
+.global-section {
+  margin: 40px auto;
+  max-width: 1400px;
+  padding: 0 20px;
+}
+
+/* 标题 */
+h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  margin: 20px 0 14px;
+  border-left: 4px solid #0078d7;
+  padding-left: 10px;
+  text-align: left;
 }
 
 /* 网格布局 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 20px;
+  min-height: 180px; /* 确保至少有2行的高度 */
+}
+
+/* 响应式 */
+@media (max-width: 1100px) {
+  .container { flex-direction: column; gap: 10px; }
+}
+@media (max-width: 800px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .grid { grid-template-columns: repeat(1, 1fr); }
 }
 
 /* 卡片样式 */
 .card {
-  background: white;
-  border-radius: 12px;
-  padding: 12px 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s;
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.card:hover { 
-  transform: translateY(-2px); 
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
 }
 
-/* 指数信息 */
-.name { 
-  font-size: 16px; 
-  font-weight: bold; 
-  margin-bottom: 4px; 
+.card .name {
+  font-size: 0.9rem;
+  color: #444;
+  font-weight: 500;
+  margin-bottom: 6px;
 }
 
-.price { 
-  font-size: 22px; 
-  font-weight: bold; 
+.card .price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
-.change { 
-  font-size: 14px; 
-  margin-top: 4px; 
+.card .change {
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
-/* 默认红涨绿跌 */
-.up { color: #d60000; }
-.down { color: #009944; }
+/* 涨跌颜色 */
+.price.up, .change.up { color: #d93025; }
+.price.down, .change.down { color: #137333; }
 
-/* 切换模式：红跌绿涨 */
-.color-reverse .up { color: #009944; }
-.color-reverse .down { color: #d60000; }
-
-/* 刷新栏 */
-#refreshBar { 
-  margin: 10px 0; 
+/* 占位符 */
+.card.placeholder {
+  background: transparent;
+  box-shadow: none;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-#refreshBtn {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 8px;
-  background: #0066ff;
-  color: white;
-  cursor: pointer;
+/* 夜间模式 */
+body.dark {
+  background: #1e1f24;
+  color: #ddd;
 }
 
-/* 颜色切换按钮 */
-#colorToggleBtn {
-  position: fixed;        /* 固定在页面 */
-  top: 16px;              /* 距离顶部16px */
-  right: 16px;            /* 距离右边16px */
-  padding: 6px 10px;      /* 小巧按钮 */
-  font-size: 14px;
-  border: none;
-  border-radius: 50%;     /* 圆形按钮 */
-  background: rgba(0, 0, 0, 0.15); /* 半透明低调 */
-  color: #333;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-  z-index: 1000;          /* 保证在最上层 */
+body.dark h2 {
+  border-left-color: #3a6ff7;
+  color: #eee;
 }
 
-#colorToggleBtn:hover {
-  background: rgba(0, 0, 0, 0.35);
-  transform: scale(1.1);  /* 悬停略微放大 */
+body.dark .card {
+  background: #2a2b31;
+  box-shadow: none;
 }
 
-#countdown { 
-  margin-left: 12px; 
-  color: #666; 
-}
+body.dark .price.up,
+body.dark .change.up { color: #ff4d4d; }
 
-#lastUpdate { 
-  margin-top: 4px; 
-  font-size: 12px; 
-  color: #888; 
-}
+body.dark .price.down,
+body.dark .change.down { color: #3cd97c; }

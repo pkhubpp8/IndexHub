@@ -1,5 +1,5 @@
 // =============================
-// market.js 完整版 2025-11
+// market.js 完整版（每行6列） 2025-11
 // =============================
 
 // 页面分类容器
@@ -8,7 +8,8 @@ const grids = {
   us: document.getElementById("usGrid"),
   hk: document.getElementById("hkGrid"),
   eu: document.getElementById("euGrid"),
-  hf: document.getElementById("hfGrid"),
+  metal: document.getElementById("metalGrid"),
+  energy: document.getElementById("energyGrid"),
   fx: document.getElementById("fxGrid"),
   crypto: document.getElementById("cryptoGrid"),
   global: document.getElementById("globalGrid")
@@ -31,6 +32,27 @@ INDEX_LIST.forEach(item => {
   `;
   grids[item.category].appendChild(div);
   cardMap[item.code] = div;
+});
+
+// 为每个网格添加占位符卡片以保持两行布局
+Object.keys(grids).forEach(category => {
+  const grid = grids[category];
+  const itemCount = grid.children.length;
+  const targetCount = 6; // 目标是两行，每行3个
+  const placeholdersNeeded = targetCount - itemCount;
+  
+  if (placeholdersNeeded > 0) {  // 如果需要填充来达到两行
+    for (let i = 0; i < placeholdersNeeded; i++) {
+      const placeholder = document.createElement("div");
+      placeholder.className = "card placeholder";
+      placeholder.innerHTML = `
+        <div class="name">--</div>
+        <div class="price">--</div>
+        <div class="change">--</div>
+      `;
+      grid.appendChild(placeholder);
+    }
+  }
 });
 
 // 解析返回字符串
@@ -61,7 +83,8 @@ function parseIndexData(p, category) {
       change = parseFloat(p[7]) || 0;
       percent = parseFloat(p[8]) || 0;
       break;
-    case "hf":
+    case "metal":
+    case "energy":
       price = parseFloat(p[0]) || 0;
       const prev = parseFloat(p[7]) || 0;
       change = price - prev;
@@ -110,6 +133,9 @@ function updateUI(data) {
       card.querySelector(".change").className = `change ${cls}`;
     } catch(e) { console.error(item.name, e); }
   });
+
+  // 刷新完数据后，对齐6列
+  fillGrids(6);
 }
 
 // 防止重复刷新
@@ -156,3 +182,27 @@ btn.addEventListener("click", () => {
 
 // 启动立即刷新一次
 refreshAll();
+
+
+// =============================
+// 自动补齐每行6个卡片（保持整齐）
+// =============================
+function fillGrids(columns = 6) {
+  Object.values(grids).forEach(grid => {
+    // 移除旧的占位符
+    grid.querySelectorAll(".placeholder").forEach(el => el.remove());
+    const cards = grid.querySelectorAll(".card:not(.placeholder)");
+    const remainder = cards.length % columns;
+    if (remainder > 0) {
+      const need = columns - remainder;
+      for (let i = 0; i < need; i++) {
+        const ph = document.createElement("div");
+        ph.className = "card placeholder";
+        grid.appendChild(ph);
+      }
+    }
+  });
+}
+
+// 页面初次加载时执行一次补齐
+fillGrids(6);
