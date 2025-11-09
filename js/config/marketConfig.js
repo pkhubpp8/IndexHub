@@ -31,8 +31,10 @@ export const INDEX_LIST = [
   // 贵金属
   { name: "伦敦金", code: "hf_XAU", category: "metal" },
   { name: "伦敦银", code: "hf_XAG", category: "metal" },
+  { name: "伦铜", code: "hf_CAD", category: "metal" },
   { name: "纽约金", code: "hf_GC", category: "metal" },
   { name: "纽约银", code: "hf_SI", category: "metal" },
+  { name: "美铜", code: "hf_HG", category: "metal" },
   { name: "黄金连续", code: "nf_AU0", category: "metal" },
 
   // 能源
@@ -48,10 +50,10 @@ export const INDEX_LIST = [
   { name: "英镑美元", code: "GBPUSD", category: "fx" },
 
   // 加密货币
-  { name: "比特币/USD", code: "btc_btcbtcusd", category: "crypto" }, 
-  { name: "ETH/USD", code: "btc_btcethusd", category: "crypto" }, 
-  { name: "SOL/USD", code: "btc_btcsolusd", category: "crypto" }, 
-  { name: "BNB/USD", code: "btc_btcbnbusd", category: "crypto" }, 
+  { name: "比特币/USD", code: "btc_btcbtcusd", category: "crypto" },
+  { name: "ETH/USD", code: "btc_btcethusd", category: "crypto" },
+  { name: "SOL/USD", code: "btc_btcsolusd", category: "crypto" },
+  { name: "BNB/USD", code: "btc_btcbnbusd", category: "crypto" },
   { name: "XRP/USD", code: "btc_btcxrpusd", category: "crypto" },
 
   // 全球

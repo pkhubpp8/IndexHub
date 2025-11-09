@@ -33,7 +33,7 @@ export class Card {
   setError() {
     const priceEl = this.element.querySelector('.price');
     const changeEl = this.element.querySelector('.change');
-    
+
     priceEl.textContent = '--';
     changeEl.textContent = '加载失败';
     priceEl.className = 'price';

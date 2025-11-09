@@ -32,7 +32,7 @@ export class GridManager {
   addPlaceholders(gridElement, itemCount, targetCount) {
     // 移除现有的占位符
     this.removePlaceholders(gridElement);
-    
+
     const placeholdersNeeded = targetCount - itemCount;
     if (placeholdersNeeded > 0) {
       for (let i = 0; i < placeholdersNeeded; i++) {
@@ -56,7 +56,7 @@ export class GridManager {
       const rows = this.gridRows[category];
       const cols = 3; // 每行固定3列
       const targetCount = rows * cols; // 目标卡片数量
-      
+
       // 添加所需的占位符
       this.addPlaceholders(grid, cards.length, targetCount);
     });

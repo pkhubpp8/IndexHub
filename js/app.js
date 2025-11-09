@@ -54,7 +54,7 @@ class App {
 
   async refresh() {
     if (this.isRefreshing) return;
-    
+
     this.isRefreshing = true;
     this.updateRefreshButton(true);
 
@@ -78,7 +78,7 @@ class App {
 
   updateUI(data) {
     this.lastUpdateEl.textContent = `更新时间：${formatTime(new Date())}`;
-    
+
     INDEX_LIST.forEach(item => {
       const card = this.cards.get(item.code);
       const rawData = data[item.code];

@@ -6,7 +6,7 @@ export class ThemeManager {
 
   initialize() {
     this.button.addEventListener('click', () => this.toggleTheme());
-    
+
     // 从本地存储恢复主题设置
     const darkMode = localStorage.getItem('darkMode') === 'true';
     if (darkMode) {
