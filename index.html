@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="./css/responsive.css">
 </head>
 <body>
-  <button id="colorToggleBtn">🔄</button>
+  <button id="themeToggleBtn">🌓</button>
+  <button id="colorToggleBtn">�</button>
   <h1>🌏 全球主要指数实时行情</h1>
 
   <div id="refreshBar">
@@ -57,7 +58,11 @@
       <div class="grid" id="metalGrid"></div>
     </div>
     <div class="right">
-      <h2>能源</h2><div class="grid" id="energyGrid"></div>
+      <div class="header-with-more">
+        <h2>能源</h2>
+        <button class="more-btn" id="energyMoreBtn" style="visibility: hidden;">查看更多</button>
+      </div>
+      <div class="grid" id="energyGrid"></div>
     </div>
 
     <!-- 贵金属详情弹窗 -->

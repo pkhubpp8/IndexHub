@@ -2,19 +2,40 @@
    theme.css
    夜间模式、主题相关样式
    ============================= */
+
+/* 夜间模式 */
 body.dark {
   background: #1e1f24;
-  color: #ddd;
+  color: #fff;  /* 修改为白色 */
 }
 body.dark h2 {
   border-left-color: #3a6ff7;
-  color: #eee;
+  color: #fff;  /* 修改为白色 */
 }
 body.dark .card {
   background: #2a2b31;
   box-shadow: none;
 }
-body.dark .price.up,
-body.dark .change.up { color: #ff4d4d; }
-body.dark .price.down,
-body.dark .change.down { color: #3cd97c; }
+
+/* 涨跌颜色模式：红涨绿跌 */
+body.red-green .price.up,
+body.red-green .change.up { color: #ff4d4d; }
+body.red-green .price.down,
+body.red-green .change.down { color: #3cd97c; }
+
+/* 涨跌颜色模式：红跌绿涨 */
+body.green-red .price.up,
+body.green-red .change.up { color: #3cd97c; }
+body.green-red .price.down,
+body.green-red .change.down { color: #ff4d4d; }
+
+/* 夜间模式下的涨跌颜色 */
+body.dark.red-green .price.up,
+body.dark.red-green .change.up { color: #ff6666; }
+body.dark.red-green .price.down,
+body.dark.red-green .change.down { color: #4dff99; }
+
+body.dark.green-red .price.up,
+body.dark.green-red .change.up { color: #4dff99; }
+body.dark.green-red .price.down,
+body.dark.green-red .change.down { color: #ff6666; }
