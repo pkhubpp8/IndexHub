@@ -1,0 +1,33 @@
+/* =============================
+   layout.css
+   区域高度、网格、分栏等布局相关
+   ============================= */
+.left > div:nth-child(2),
+.right > div:nth-child(2) {
+  min-height: 240px;
+  margin-bottom: 40px;
+}
+.left > div:nth-child(4),
+.right > div:nth-child(4) {
+  min-height: 240px;
+  margin-bottom: 40px;
+}
+.left > div:nth-child(6),
+.right > div:nth-child(6) {
+  min-height: 240px;
+  margin-bottom: 40px;
+}
+#globalGrid {
+  grid-template-columns: repeat(2, 1fr);
+  min-height: 90px;
+}
+.grid {
+  min-height: 90px;
+}
+#cnGrid, #usGrid, #hkGrid, #euGrid,
+#fxGrid, #cryptoGrid {
+  min-height: 200px;
+}
+#metalGrid, #energyGrid {
+  min-height: 200px;
+}

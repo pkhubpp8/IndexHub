@@ -1,100 +1,69 @@
-/* 响应式布局规则 */
+/* =============================
+   responsive.css
+   合并并统一管理所有响应式断点（原 style.css / mobile.css 中的媒体查询已迁移到这里）
+   ============================= */
 
-/* 大屏幕布局 (>1400px) - 左右各3列 */
+/* 极大屏幕保护（保持最大宽度） */
 @media (min-width: 1401px) {
   .container, .global-section {
     max-width: 1400px;
   }
+}
+
+/* 大屏 - 中屏过渡 */
+@media (max-width: 1400px) {
+  .container {
+    gap: 20px;
+  }
   .grid {
-    gap: 16px;
+    gap: 10px;
+  }
+  .card {
+    padding: 12px 4px;
   }
 }
 
-/* 中等屏幕布局 (1200px-1400px) - 左右各2列 */
-@media (max-width: 1400px) {
+/* 平板 / 窄屏调整 */
+@media (max-width: 1100px) {
   .container {
-    max-width: 1200px;  /* 增加最大宽度以减少空白 */
-    gap: 20px;
+    flex-direction: column;
+    gap: 0;
+    max-width: 800px;
   }
   .grid {
     gap: 12px;
   }
-  /* 调整为2列布局 */
-  .left .grid, .right .grid {
-    grid-template-columns: repeat(2, 1fr);
+  /* 调整列数（在较窄的平板或窄屏上） */
+  #cnGrid, #euGrid, #fxGrid, #cryptoGrid {
+    grid-template-columns: repeat(4, 1fr);
   }
-  /* 修复空白占用格问题 */
-  .grid {
-    grid-auto-rows: min-content;
-    min-height: 0 !important;
-  }
-}
-
-/* 较窄屏幕布局但保持左右分栏 (900px-1200px) */
-@media (max-width: 1200px) and (min-width: 901px) {
-  .container {
-    max-width: 880px;  /* 更合适的宽度 */
-    gap: 16px;
-    padding: 0 12px;
-  }
-  .left .grid, .right .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-}
-
-/* 取消左右分栏，使用3列布局 (600px-900px) */
-@media (max-width: 900px) and (min-width: 601px) {
-  .container {
-    flex-direction: column;
-    max-width: 800px;
-    gap: 16px;
-    padding: 0 12px;
-  }
-  .left .grid, .right .grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    grid-auto-rows: min-content;
-    min-height: 0 !important;
-    gap: 10px;
-  }
-  .left, .right {
-    width: 100%;
+  #metalGrid {
+    grid-template-columns: repeat(3, 1fr);
   }
   .left > div, .right > div {
-    margin-bottom: 16px;
+    min-height: auto !important;
+    margin-bottom: 30px;
+  }
+  .global-section {
+    max-width: 800px;
   }
 }
 
-/* 小屏幕布局 (<=600px) - 左右各2列 */
-@media (max-width: 600px) {
-  .container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    max-width: 600px;
-    padding: 0 10px;
-    gap: 16px;
-  }
-  .left, .right {
-    flex: 0 0 calc(50% - 8px);
-    width: calc(50% - 8px);
-  }
-  .grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    grid-auto-rows: min-content !important;
-    min-height: 0 !important;
-    gap: 8px;
-  }
-  .card {
-    height: 75px;
-    padding: 8px 4px;
-  }
+/* 小屏（手机横向/窄屏） */
+@media (max-width: 800px) {
   .container, .global-section {
-    margin: 16px auto;
+    max-width: 600px;
+    padding: 0 12px;
+  }
+  #cnGrid, #euGrid, #metalGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  #fxGrid, #cryptoGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* 手机布局 (<=500px) */
+/* 手机（竖屏） */
 @media (max-width: 500px) {
   .container {
     flex-direction: column;
@@ -109,45 +78,18 @@
     grid-auto-rows: min-content !important;
     min-height: 0 !important;
   }
-  h1 {
-    font-size: 1.2rem;
-    margin-top: 60px;
-  }
-  h2 {
-    font-size: 1rem;
-  }
-  /* 调整卡片样式 */
-  .card {
-    height: 70px;
-    padding: 8px 4px;
-  }
-  .card .name {
-    font-size: 0.85rem;
-    margin-bottom: 4px;
-  }
-  .card .price {
-    font-size: 1rem;
-    margin-bottom: 2px;
-  }
-  .card .change {
-    font-size: 0.8rem;
-  }
+  h1 { font-size: 1.2rem; margin-top: 60px; }
+  h2 { font-size: 1rem; }
+  .card { height: 70px; padding: 8px 4px; }
+  .card .name { font-size: 0.85rem; margin-bottom: 4px; }
+  .card .price { font-size: 1rem; margin-bottom: 2px; }
+  .card .change { font-size: 0.8rem; }
+  #refreshBtn { font-size: 0.85rem; padding: 4px 10px; }
 }
 
-/* 小手机布局 (<=400px) */
+/* 超小手机（<=400px）特殊处理 */
 @media (max-width: 400px) {
-  /* 所有网格改为单列 */
-  .grid {
-    grid-template-columns: 1fr !important;
-  }
-  .container, .global-section {
-    padding: 0 8px;
-  }
-  .card {
-    height: 60px;
-  }
-  /* 移除最小高度限制 */
-  .grid {
-    min-height: auto !important;
-  }
+  .grid { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .container, .global-section { padding: 0 8px; }
+  .card { height: 60px; }
 }

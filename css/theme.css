@@ -1,0 +1,20 @@
+/* =============================
+   theme.css
+   夜间模式、主题相关样式
+   ============================= */
+body.dark {
+  background: #1e1f24;
+  color: #ddd;
+}
+body.dark h2 {
+  border-left-color: #3a6ff7;
+  color: #eee;
+}
+body.dark .card {
+  background: #2a2b31;
+  box-shadow: none;
+}
+body.dark .price.up,
+body.dark .change.up { color: #ff4d4d; }
+body.dark .price.down,
+body.dark .change.down { color: #3cd97c; }
