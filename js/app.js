@@ -47,7 +47,7 @@ class App {
       });
     });
 
-    // 创建完整的贵金属卡片（用于弹窗）
+    // 创建完整的金属卡片（用于弹窗）
     if (groupedItems.metal?.length > 6) {
       const metalGrid = document.getElementById('metalGridFull');
       if (metalGrid) {
@@ -67,6 +67,18 @@ class App {
       this.countdown = UPDATE_INTERVAL;
       this.refresh();
     });
+    
+    // 监听颜色模式切换事件
+    window.addEventListener('colorModeChanged', () => {
+      this.updateColorIndicators();
+    });
+  }
+
+  updateColorIndicators() {
+    // 更新所有卡片的颜色模式指示器
+    for (const [code, card] of this.cards) {
+      card.updateColorIndicators();
+    }
   }
 
   startCountdown() {

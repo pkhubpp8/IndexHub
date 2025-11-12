@@ -25,9 +25,17 @@ export class Card {
     const changeEl = this.element.querySelector('.change');
 
     priceEl.textContent = price.toFixed(2);
-    changeEl.textContent = `${change >= 0 ? "▲" : "▼"} ${change.toFixed(2)} (${percent.toFixed(2)}%)`;
+    changeEl.textContent = `${change >= 0 ? "▲" : "▼"} ${change >= 0 ? "+" : ""}${change.toFixed(2)} (${change >= 0 ? "+" : ""}${percent.toFixed(2)}%)`;
     priceEl.className = `price ${cls}`;
     changeEl.className = `change ${cls}`;
+    
+    // 色觉障碍模式下添加额外的视觉指示器
+    if (document.body.classList.contains('colorblind')) {
+      this.element.classList.remove('up-indicator', 'down-indicator');
+      this.element.classList.add(`${cls}-indicator`);
+    } else {
+      this.element.classList.remove('up-indicator', 'down-indicator');
+    }
   }
 
   setError() {
@@ -38,5 +46,30 @@ export class Card {
     changeEl.textContent = '加载失败';
     priceEl.className = 'price';
     changeEl.className = 'change';
+    
+    // 移除色觉障碍模式的指示器
+    this.element.classList.remove('up-indicator', 'down-indicator');
+  }
+
+  updateColorIndicators() {
+    // 根据当前价格状态更新颜色模式的指示器
+    const priceEl = this.element.querySelector('.price');
+    if (priceEl && priceEl.classList.contains('up')) {
+      if (document.body.classList.contains('colorblind')) {
+        this.element.classList.remove('down-indicator');
+        this.element.classList.add('up-indicator');
+      } else {
+        this.element.classList.remove('up-indicator', 'down-indicator');
+      }
+    } else if (priceEl && priceEl.classList.contains('down')) {
+      if (document.body.classList.contains('colorblind')) {
+        this.element.classList.remove('up-indicator');
+        this.element.classList.add('down-indicator');
+      } else {
+        this.element.classList.remove('up-indicator', 'down-indicator');
+      }
+    } else {
+      this.element.classList.remove('up-indicator', 'down-indicator');
+    }
   }
 }

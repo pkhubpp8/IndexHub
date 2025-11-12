@@ -43,3 +43,67 @@ body.dark.green-red .price.up,
 body.dark.green-red .change.up { color: #4dff99; }
 body.dark.green-red .price.down,
 body.dark.green-red .change.down { color: #ff6666; }
+
+/* =============================
+   色觉障碍辅助模式
+   使用蓝/橙配色方案，并添加额外的视觉指示器
+   ============================= */
+
+/* 色觉障碍模式：使用蓝色表示上涨，橙色表示下跌 */
+body.colorblind .price.up,
+body.colorblind .change.up { 
+  color: #0066cc; 
+  font-weight: 700;
+}
+body.colorblind .price.down,
+body.colorblind .change.down { 
+  color: #ff8800; 
+  font-weight: 700;
+}
+
+/* 色觉障碍模式：为卡片添加边框指示 */
+body.colorblind .card .price.up,
+body.colorblind .card .change.up {
+  position: relative;
+}
+
+body.colorblind .card.up-indicator {
+  border-left: 4px solid #0066cc;
+  border-right: 1px solid #0066cc;
+}
+
+body.colorblind .card.down-indicator {
+  border-left: 4px solid #ff8800;
+  border-right: 1px solid #ff8800;
+}
+
+/* 色觉障碍模式：增强箭头显示 */
+body.colorblind .change.up {
+  font-size: 0.95rem;
+}
+
+body.colorblind .change.down {
+  font-size: 0.95rem;
+}
+
+/* 夜间模式下的色觉障碍模式 */
+body.dark.colorblind .price.up,
+body.dark.colorblind .change.up { 
+  color: #4da6ff; 
+  font-weight: 700;
+}
+body.dark.colorblind .price.down,
+body.dark.colorblind .change.down { 
+  color: #ffaa44; 
+  font-weight: 700;
+}
+
+body.dark.colorblind .card.up-indicator {
+  border-left-color: #4da6ff;
+  border-right-color: #4da6ff;
+}
+
+body.dark.colorblind .card.down-indicator {
+  border-left-color: #ffaa44;
+  border-right-color: #ffaa44;
+}

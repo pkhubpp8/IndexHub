@@ -28,7 +28,7 @@ export const INDEX_LIST = [
   { name: "法国CAC40", code: "b_CAC", category: "eu" },
   { name: "意大利富时MIB", code: "b_FTSEMIB", category: "eu" },
 
-  // 贵金属 - 现货与外盘
+  // 金属 - 现货与外盘
   { name: "伦敦金", code: "hf_XAU", category: "metal" },
   { name: "伦敦银", code: "hf_XAG", category: "metal" },
   { name: "纽约金", code: "hf_GC", category: "metal" },
