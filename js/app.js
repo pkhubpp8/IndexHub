@@ -5,7 +5,7 @@ import { gridManager } from './utils/gridUtils.js';
 import { formatTime } from './utils/dateUtils.js';
 import { Card } from './ui/Card.js';
 import { themeManager } from './ui/theme.js';
-import { ModalManager } from './ui/Modal.js';
+// ModalManager在Modal.js中自动初始化，不需要在这里导入
 
 class App {
   constructor() {
@@ -15,7 +15,7 @@ class App {
     this.cards = new Map();
     this.isRefreshing = false;
     this.countdown = UPDATE_INTERVAL;
-    this.modalManager = new ModalManager();  // 初始化模态窗口管理器
+    // ModalManager已在Modal.js模块加载时初始化，这里不需要创建新实例
 
     this.initialize();
   }
@@ -37,29 +37,80 @@ class App {
       return acc;
     }, {});
 
-    // 为每个分类创建卡片，限制显示数量
+    // 为每个分类创建卡片，限制显示数量（最多6个）
     Object.entries(groupedItems).forEach(([category, items]) => {
-      const displayItems = category === 'metal' ? items.slice(0, 6) : items;
+      const grid = gridManager.grids[category];
+      if (!grid) {
+        console.warn(`Grid not found for category: ${category}`);
+        return;
+      }
+      
+      const displayItems = items.slice(0, 6);
       displayItems.forEach(item => {
         const card = new Card(item);
-        gridManager.grids[category].appendChild(card.element);
+        grid.appendChild(card.element);
         this.cards.set(item.code, card);
       });
+      
+      // 如果项目数大于6，显示"查看更多"按钮并创建完整视图卡片
+      if (items.length > 6) {
+        const moreBtn = document.getElementById(`${category}MoreBtn`);
+        if (moreBtn) {
+          moreBtn.style.display = 'block';
+        }
+        
+        // 创建完整的卡片（用于弹窗）
+        // 由于弹窗可能还没创建，使用延迟重试机制
+        let retryCount = 0;
+        const maxRetries = 10; // 最多重试10次（1秒）
+        const createFullCards = () => {
+          const fullGrid = document.getElementById(`${category}GridFull`);
+          if (fullGrid) {
+            items.forEach(item => {
+              const card = new Card(item);
+              fullGrid.appendChild(card.element);
+              this.cards.set(item.code + '_full', card);
+            });
+            
+            // 根据项目数量优化弹窗布局
+            this.optimizeModalGridLayout(fullGrid, items.length);
+          } else if (retryCount < maxRetries) {
+            // 如果弹窗还没创建，延迟重试
+            retryCount++;
+            setTimeout(createFullCards, 100);
+          } else {
+            console.warn(`Failed to create full cards for ${category}: grid not found after ${maxRetries} retries`);
+          }
+        };
+        createFullCards();
+      }
     });
 
-    // 创建完整的金属卡片（用于弹窗）
-    if (groupedItems.metal?.length > 6) {
-      const metalGrid = document.getElementById('metalGridFull');
-      if (metalGrid) {
-        groupedItems.metal.forEach(item => {
-          const card = new Card(item);
-          metalGrid.appendChild(card.element);
-          this.cards.set(item.code + '_full', card);
-        });
-      }
-    }
-
     gridManager.updatePlaceholders();
+  }
+
+  // 根据项目数量优化弹窗网格布局
+  optimizeModalGridLayout(grid, itemCount) {
+    let columns;
+    
+    // 根据项目数量智能选择列数
+    if (itemCount <= 4) {
+      columns = itemCount; // 1-4个项目：使用对应列数
+    } else if (itemCount === 5) {
+      columns = 3; // 5个项目：3列（2行，最后一行2个）
+    } else if (itemCount === 6) {
+      columns = 3; // 6个项目：3列（2行）
+    } else if (itemCount === 7) {
+      columns = 4; // 7个项目：4列（2行，最后一行3个）
+    } else if (itemCount === 8) {
+      columns = 4; // 8个项目：4列（2行）
+    } else if (itemCount === 9) {
+      columns = 3; // 9个项目：3列（3行）
+    } else {
+      columns = 4; // 10个以上：4列
+    }
+    
+    grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
   }
 
   setupEventListeners() {

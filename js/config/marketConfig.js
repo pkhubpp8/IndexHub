@@ -45,6 +45,7 @@ export const INDEX_LIST = [
   { name: "美元指数", code: "DINIW", category: "fx" },
   { name: "美元人民币", code: "USDCNY", category: "fx" },
   { name: "欧元人民币", code: "EURCNY", category: "fx" },
+  { name: "人民币日元", code: "CNYJPY", category: "fx" },
   { name: "欧元美元", code: "EURUSD", category: "fx" },
   { name: "美元日元", code: "USDJPY", category: "fx" },
   { name: "英镑美元", code: "GBPUSD", category: "fx" },

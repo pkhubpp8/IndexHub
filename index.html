@@ -26,28 +26,52 @@
 
   <div class="container">
     <div class="left">
-      <h2>A股指数</h2><div class="grid" id="cnGrid"></div>
+      <div class="header-with-more">
+        <h2>A股指数</h2>
+        <button class="more-btn" id="cnMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="cnGrid"></div>
     </div>
     <div class="right">
-      <h2>香港指数</h2><div class="grid" id="hkGrid"></div>
+      <div class="header-with-more">
+        <h2>香港指数</h2>
+        <button class="more-btn" id="hkMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="hkGrid"></div>
     </div>
   </div>
 
   <div class="container">
     <div class="left">
-      <h2>美国指数</h2><div class="grid" id="usGrid"></div>
+      <div class="header-with-more">
+        <h2>美国指数</h2>
+        <button class="more-btn" id="usMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="usGrid"></div>
     </div>
     <div class="right">
-      <h2>欧洲指数</h2><div class="grid" id="euGrid"></div>
+      <div class="header-with-more">
+        <h2>欧洲指数</h2>
+        <button class="more-btn" id="euMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="euGrid"></div>
     </div>
   </div>
 
   <div class="container">
     <div class="left">
-      <h2>亚洲指数</h2><div class="grid" id="asiaGrid"></div>
+      <div class="header-with-more">
+        <h2>亚洲指数</h2>
+        <button class="more-btn" id="asiaMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="asiaGrid"></div>
     </div>
     <div class="right">
-      <h2>全球 / 新兴市场</h2><div class="grid" id="globalGrid"></div>
+      <div class="header-with-more">
+        <h2>全球 / 新兴市场</h2>
+        <button class="more-btn" id="globalMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="globalGrid"></div>
     </div>
   </div>
 
@@ -55,40 +79,38 @@
     <div class="left">
       <div class="header-with-more">
         <h2>金属</h2>
-        <button class="more-btn" id="metalMoreBtn">查看更多</button>
+        <button class="more-btn" id="metalMoreBtn" style="display: none;">查看更多</button>
       </div>
       <div class="grid" id="metalGrid"></div>
     </div>
     <div class="right">
       <div class="header-with-more">
         <h2>能源</h2>
-        <button class="more-btn" id="energyMoreBtn" style="visibility: hidden;">查看更多</button>
+        <button class="more-btn" id="energyMoreBtn" style="display: none;">查看更多</button>
       </div>
       <div class="grid" id="energyGrid"></div>
-    </div>
-
-    <!-- 金属详情弹窗 -->
-    <div class="modal" id="metalModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>金属详情</h3>
-          <button class="close-btn" id="metalModalClose">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div class="grid" id="metalGridFull"></div>
-        </div>
-      </div>
     </div>
   </div>
 
   <div class="container">
     <div class="left">
-      <h2>外汇</h2><div class="grid" id="fxGrid"></div>
+      <div class="header-with-more">
+        <h2>外汇</h2>
+        <button class="more-btn" id="fxMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="fxGrid"></div>
     </div>
     <div class="right">
-      <h2>加密货币</h2><div class="grid" id="cryptoGrid"></div>
+      <div class="header-with-more">
+        <h2>加密货币</h2>
+        <button class="more-btn" id="cryptoMoreBtn" style="display: none;">查看更多</button>
+      </div>
+      <div class="grid" id="cryptoGrid"></div>
     </div>
   </div>
+
+  <!-- 所有类别的弹窗容器 -->
+  <div id="modalContainer"></div>
 
   <script type="module" src="./js/ui/Modal.js"></script>
   <script type="module" src="./js/app.js"></script>
