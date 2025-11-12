@@ -3,6 +3,22 @@
    夜间模式、主题相关样式
    ============================= */
 
+/* 为所有受主题影响的元素添加平滑过渡 */
+h2 {
+  transition: color 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-left-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: color, border-left-color;
+}
+
+.card .name {
+  transition: color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: color;
+}
+
+.price, .change {
+  transition: color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: color;
+}
+
 /* 夜间模式 */
 body.dark {
   background: #1e1f24;
@@ -19,6 +35,15 @@ body.dark .card {
 
 body.dark .card .name {
   color: #fff;  /* 修改为白色 */
+}
+
+body.dark h1 {
+  color: #fff;
+}
+
+body.dark #lastUpdate,
+body.dark #countdown {
+  color: #aaa;
 }
 
 /* 涨跌颜色模式：红涨绿跌 */

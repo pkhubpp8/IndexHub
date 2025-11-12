@@ -68,8 +68,11 @@ export class ThemeManager {
   }
 
   toggleTheme() {
-    const isDark = document.body.classList.toggle('dark');
-    localStorage.setItem('darkMode', isDark);
+    // 使用 requestAnimationFrame 确保过渡更平滑
+    requestAnimationFrame(() => {
+      const isDark = document.body.classList.toggle('dark');
+      localStorage.setItem('darkMode', isDark);
+    });
   }
 
   toggleColor() {

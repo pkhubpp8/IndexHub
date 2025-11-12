@@ -4,9 +4,11 @@
    ============================= */
 body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  background: #f5f7fa;
-  color: #333;
+  background: #e8eaed;
+  color: #202124;
   margin: 0;
   padding: 0;
   text-align: center;
+  transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: background-color, color;
 }
