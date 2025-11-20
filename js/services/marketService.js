@@ -1,9 +1,11 @@
-import { PROXY_URL } from '../config/constants.js';
+import { PROXY_URL, DB_API_URL, USE_DATABASE_API } from '../config/constants.js';
 
 class MarketService {
   async fetchMarketData(codes) {
     try {
-      const res = await fetch(`${PROXY_URL}?code=${codes.join(',')}`);
+      // 根据配置选择使用哪个API
+      const apiUrl = USE_DATABASE_API ? DB_API_URL : PROXY_URL;
+      const res = await fetch(`${apiUrl}?code=${codes.join(',')}`);
       const text = await res.text();
       return this.parseResponse(text);
     } catch (error) {
