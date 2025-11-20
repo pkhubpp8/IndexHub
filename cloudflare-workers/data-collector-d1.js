@@ -52,6 +52,18 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // 处理 CORS 预检请求
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Max-Age': '86400',
+        }
+      });
+    }
+
     // API查询接口 - 兼容原来的格式
     if (url.pathname === '/' || url.pathname === '/api') {
       const code = url.searchParams.get('code');
@@ -89,8 +101,46 @@ export default {
       });
     }
 
+    // 历史数据查询接口
+    if (url.pathname === '/api/history') {
+      const code = url.searchParams.get('code');
+      const days = parseInt(url.searchParams.get('days') || '7', 10);
+      const limit = parseInt(url.searchParams.get('limit') || '1000', 10);
+
+      if (!code) {
+        return new Response(JSON.stringify({ error: 'Missing code parameter' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+        });
+      }
+
+      try {
+        const history = await this.queryHistoryData(env.DB, code, days, limit);
+        return new Response(JSON.stringify({
+          code,
+          days,
+          count: history.length,
+          data: history
+        }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'public, max-age=60'
+          }
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+        });
+      }
+    }
+
     return new Response('IndexHub Data Collector with D1. Check scheduled task.', {
-      headers: { 'Content-Type': 'text/plain' }
+      headers: {
+        'Content-Type': 'text/plain',
+        'Access-Control-Allow-Origin': '*'
+      }
     });
   },
 
@@ -108,7 +158,12 @@ export default {
 
       // 3. 保存到D1数据库
       const result = await this.saveToD1(env.DB, parsedData);
-      console.log(`Saved to D1: ${result.updated} updated, ${result.skipped} skipped`);
+      console.log(`Saved to D1: ${result.updated} updated, ${result.skipped} skipped, ${result.history} history records`);
+
+      // 4. 定期清理旧的历史数据（保留最近30天）
+      if (Math.random() < 0.1) { // 10%的概率执行清理
+        ctx.waitUntil(this.cleanOldHistory(env.DB, 30));
+      }
 
       console.log(`Data collection completed. Processed ${parsedData.length} items.`);
     } catch (error) {
@@ -213,6 +268,7 @@ export default {
   async saveToD1(db, dataArray) {
     let updatedCount = 0;
     let skippedCount = 0;
+    let historyCount = 0;
 
     for (const item of dataArray) {
       try {
@@ -246,6 +302,28 @@ export default {
           ).run();
 
           updatedCount++;
+
+          // 如果数据真正变化，写入历史表
+          if (updateDecision.dataChanged) {
+            try {
+              await db.prepare(`
+                INSERT INTO market_history
+                (code, category, raw_data, price, change, percent, data_timestamp)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+              `).bind(
+                item.code,
+                item.category,
+                item.rawData,
+                item.price,
+                item.change,
+                item.percent,
+                now
+              ).run();
+              historyCount++;
+            } catch (histError) {
+              console.error(`Error saving history for ${item.code}:`, histError);
+            }
+          }
         } else {
           skippedCount++;
         }
@@ -254,7 +332,7 @@ export default {
       }
     }
 
-    return { updated: updatedCount, skipped: skippedCount };
+    return { updated: updatedCount, skipped: skippedCount, history: historyCount };
   },
 
   // 计算数据哈希
@@ -332,6 +410,28 @@ export default {
     }
   },
 
+  // 查询历史数据
+  async queryHistoryData(db, code, days = 7, limit = 1000) {
+    try {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+      const startDateStr = startDate.toISOString();
+
+      const results = await db.prepare(`
+        SELECT price, change, percent, data_timestamp, created_at
+        FROM market_history
+        WHERE code = ? AND data_timestamp >= ?
+        ORDER BY data_timestamp DESC
+        LIMIT ?
+      `).bind(code, startDateStr, limit).all();
+
+      return results.results || [];
+    } catch (error) {
+      console.error('Error querying history data:', error);
+      throw error;
+    }
+  },
+
   // 即时更新特定代码的数据（用于查询时发现数据陈旧的情况）
   async updateSpecificCodes(db, codes) {
     try {
@@ -342,6 +442,24 @@ export default {
       console.log(`Stale data updated for ${parsedData.length} items`);
     } catch (error) {
       console.error('Error updating stale data:', error);
+    }
+  },
+
+  // 清理旧的历史数据
+  async cleanOldHistory(db, keepDays = 30) {
+    try {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - keepDays);
+      const cutoffDateStr = cutoffDate.toISOString();
+
+      const result = await db.prepare(`
+        DELETE FROM market_history
+        WHERE data_timestamp < ?
+      `).bind(cutoffDateStr).run();
+
+      console.log(`Cleaned old history data before ${cutoffDateStr}, deleted ${result.changes || 0} records`);
+    } catch (error) {
+      console.error('Error cleaning old history:', error);
     }
   }
 };

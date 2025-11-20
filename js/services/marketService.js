@@ -14,6 +14,79 @@ class MarketService {
     }
   }
 
+  async fetchHistoryData(code, days = 1) {
+    try {
+      const apiUrl = USE_DATABASE_API ? DB_API_URL : PROXY_URL;
+      // 确保URL不以斜杠结尾，避免双斜杠问题
+      const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
+      const res = await fetch(`${baseUrl}/api/history?code=${code}&days=${days}&limit=2000`);
+      const json = await res.json();
+
+      if (json.error) {
+        throw new Error(json.error);
+      }
+
+      return json.data || [];
+    } catch (error) {
+      console.error('Failed to fetch history data:', error);
+      throw error;
+    }
+  }
+
+  // 数据抽样函数，减少数据点数量以优化显示
+  sampleData(data, maxPoints = 100) {
+    if (!data || data.length <= maxPoints) {
+      return data;
+    }
+
+    const sampledData = [];
+    const step = data.length / maxPoints;
+
+    for (let i = 0; i < maxPoints; i++) {
+      const index = Math.floor(i * step);
+      if (index < data.length) {
+        sampledData.push(data[index]);
+      }
+    }
+
+    // 确保包含最后一个数据点
+    if (sampledData[sampledData.length - 1] !== data[data.length - 1]) {
+      sampledData.push(data[data.length - 1]);
+    }
+
+    return sampledData;
+  }
+
+  // 处理历史数据，转换为图表所需格式
+  processHistoryData(data, days) {
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // 数据按时间倒序，需要反转
+    const sortedData = [...data].reverse();
+
+    // 转换为图表格式
+    const chartData = sortedData.map(item => ({
+      timestamp: item.data_timestamp,
+      price: item.price,
+      change: item.change,
+      percent: item.percent
+    }));
+
+    // 根据天数决定抽样程度
+    let maxPoints;
+    if (days === 1) {
+      maxPoints = 100; // 1天显示更多细节
+    } else if (days === 5) {
+      maxPoints = 80;  // 5天适度抽样
+    } else {
+      maxPoints = 60;  // 30天较少点
+    }
+
+    return this.sampleData(chartData, maxPoints);
+  }
+
   parseResponse(text) {
     const result = {};
     const lines = text.split("\n").filter(x => x.includes("hq_str_"));
