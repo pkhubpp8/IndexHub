@@ -25,87 +25,33 @@
 
 ### 1. 创建 D1 数据库
 
-```bash
-# 创建数据库
-wrangler d1 create index-hub-db
+### 2. 初始化数据库结构
 
-# 记录输出的 database_id，例如：
-# database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-```
-
-### 2. 配置 wrangler.toml
-
-在 `cloudflare-workers` 目录创建 `wrangler.toml`：
-
-```toml
-name = "index-hub-collector"
-main = "data-collector-d1.js"
-compatibility_date = "2024-01-01"
-
-# D1 数据库绑定
-[[d1_databases]]
-binding = "DB"
-database_name = "index-hub-db"
-database_id = "你的数据库ID"  # 替换为步骤1中的 database_id
-
-# Cron 触发器 - 每分钟执行一次
-[triggers]
-crons = ["* * * * *"]
-```
-
-### 3. 初始化数据库结构
-
-```bash
-# 进入目录
-cd cloudflare-workers
-
-# 执行SQL脚本创建表
-wrangler d1 execute index-hub-db --remote --file=d1-schema.sql
-```
-
-**如果数据库已存在且有数据**，使用迁移脚本：
-
-```bash
-wrangler d1 execute index-hub-db --remote --file=d1-migration.sql
-```
-
-### 4. 部署 Worker
-
-```bash
-# 部署到 Cloudflare
-wrangler deploy
-```
+### 3. 部署 Worker
 
 部署成功后会得到一个 URL，例如：
 ```
-https://index-hub-collector.your-subdomain.workers.dev
+https://index-db-proxy.your-subdomain.workers.dev
 ```
 
-### 5. 测试
+### 4. 测试
 
 #### 测试查询接口
 
 ```bash
-# 查询单个市场
-curl "https://index-hub-collector.your-subdomain.workers.dev/?code=s_sh000001"
+# 查询单个数据
+curl "https://index-db-proxy.your-subdomain.workers.dev/?code=s_sh000001"
 
-# 查询多个市场
-curl "https://index-hub-collector.your-subdomain.workers.dev/?code=s_sh000001,gb_ixic,hkHSI"
+# 查询多个数据
+curl "https://index-db-proxy.your-subdomain.workers.dev/?code=s_sh000001,gb_ixic,hkHSI"
 ```
 
-#### 测试定时任务
-
-```bash
-# 手动触发定时任务（用于测试）
-wrangler dev --test-scheduled
-```
-
-### 6. 更新前端配置
+### 5. 更新前端配置
 
 修改 `js/config/constants.js` 中的 API URL：
 
 ```javascript
-export const DB_API_URL = "https://index-hub-collector.your-subdomain.workers.dev/";
+export const DB_API_URL = "https://index-db-proxy.your-subdomain.workers.dev/";
 export const USE_DATABASE_API = true;  // 确保这个设置为 true
 ```
 
@@ -156,38 +102,6 @@ export const USE_DATABASE_API = true;  // 确保这个设置为 true
 1. 立即返回数据库中的最新数据
 2. 如果数据超过60秒，后台异步触发更新（不阻塞响应）
 3. 如果大部分数据都陈旧（>50%），不触发更新（可能是全局问题）
-
-## 监控和调试
-
-### 查看日志
-```bash
-wrangler tail
-```
-
-### 查看数据库内容
-```bash
-# 查看所有数据
-wrangler d1 execute index-hub-db --remote --command "SELECT * FROM market_latest LIMIT 10"
-
-# 查看更新时间
-wrangler d1 execute index-hub-db --remote --command "SELECT code, updated_at, last_change_at FROM market_latest ORDER BY updated_at DESC LIMIT 10"
-
-# 检查陈旧数据
-wrangler d1 execute index-hub-db --remote --command "SELECT code, datetime('now') as now, updated_at, CAST((julianday('now') - julianday(updated_at)) * 86400 AS INTEGER) as seconds_old FROM market_latest WHERE CAST((julianday('now') - julianday(updated_at)) * 86400 AS INTEGER) > 120"
-```
-
-## 成本估算
-
-Cloudflare Workers 免费套餐：
-- ✅ 每天 100,000 次请求
-- ✅ D1 数据库：每天 100,000 次读取 + 50,000 次写入
-- ✅ Cron 触发器：无限制
-
-预计使用量：
-- 定时任务：1,440 次/天（每分钟1次）
-- 写入操作：约 1,440 次/天（大部分时间跳过）
-- 前端查询：取决于访问量
-- **完全在免费额度内！**
 
 ## 更新和维护
 
