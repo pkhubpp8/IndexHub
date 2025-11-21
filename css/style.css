@@ -1,7 +1,7 @@
 /* =============================
    style.css
-   保留主要布局与网格基础（具体的基础/组件/主题/响应式已拆分到相应文件）
-   请按顺序在 HTML 中引入：base.css -> component.css -> layout.css -> style.css -> theme.css -> responsive.css
+   主要布局与网格基础（具体的基础/组件/主题/响应式已拆分到相应文件）
+   请按顺序在 HTML 中引入：base.css -> component.css -> style.css -> theme.css -> responsive.css
    ============================= */
 
 /* ====== 主布局 ====== */
@@ -34,45 +34,9 @@
   margin-top: 0;
 }
 
-/* 匹配高度的容器对 */
-.left > div:nth-child(2),
-.right > div:nth-child(2) {
-  min-height: 240px; /* A股指数和港股指数区域 */
-  margin-bottom: 40px;
-}
-
-.left > div:nth-child(4),
-.right > div:nth-child(4) {
-  min-height: 240px; /* 美国指数和欧洲指数区域 */
-  margin-bottom: 40px;
-}
-
-.left > div:nth-child(6),
-.right > div:nth-child(6) {
-  min-height: 240px; /* 外汇和加密货币区域 */
-  margin-bottom: 40px;
-}
-
-/* 为每个标题-内容组合创建独立容器 */
-.content-section {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
 /* 标题和网格容器间距一致 */
 h2 + .grid {
   margin-top: 16px;
-}
-
-.container.bottom {
-  margin: 40px auto;
-}
-
-.global-section {
-  margin: 40px auto;
-  max-width: 1400px;
-  padding: 0 20px;
 }
 
 /* 标题 */

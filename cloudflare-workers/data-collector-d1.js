@@ -48,6 +48,18 @@ const MARKET_CONFIG = {
   'btc_btcxrpusd': { category: 'crypto', name: '瑞波币' }
 };
 
+// 根据code前缀确定数据格式分组（用于批量更新）
+function getFormatGroup(code) {
+  if (code.startsWith('s_') || code.startsWith('b_')) return 'cn_index';      // 中国和欧洲指数（default格式）
+  if (code.startsWith('gb_')) return 'us_index';                               // 美国指数
+  if (code.startsWith('hk')) return 'hk_index';                                // 港股指数
+  if (code.startsWith('znb_')) return 'asia_index';                            // 亚洲指数（类似中国格式）
+  if (code.startsWith('hf_')) return 'futures';                                // 期货（金属/能源）
+  if (code.startsWith('nf_')) return 'cn_futures';                             // 国内期货
+  if (code.startsWith('btc_')) return 'crypto';                                // 加密货币
+  return 'fx';                                                                  // 外汇（无前缀的如DINIW）
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -74,11 +86,11 @@ export default {
       const codes = code.split(',');
       const results = await this.queryMarketData(env.DB, codes);
 
-      // 检查数据新鲜度，如果超过60秒则触发即时更新
+      // 检查数据新鲜度，如果超过10分钟则触发即时更新
       const now = new Date();
       const staleData = results.filter(item => {
         const updatedAt = new Date(item.updated_at + 'Z');
-        return (now - updatedAt) / 1000 > 60;
+        return (now - updatedAt) / 1000 > 600;
       });
 
       // 如果有陈旧数据且少于结果总数的50%，尝试即时更新这些数据
@@ -96,7 +108,7 @@ export default {
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=10' // 客户端缓存10秒
+          'Cache-Control': 'public, max-age=60' // 客户端缓存60秒
         }
       });
     }
@@ -203,6 +215,7 @@ export default {
           result.push({
             code,
             category: config.category,
+            formatGroup: getFormatGroup(code),
             name: config.name,
             rawData,
             ...parsed
@@ -265,13 +278,53 @@ export default {
     return { price, change, percent };
   },
 
+  // 验证数据是否有效（过滤异常数据）
+  isValidData(item) {
+    // 价格必须大于0
+    if (!item.price || item.price <= 0) {
+      console.log(`Invalid data for ${item.code}: price is ${item.price}`);
+      return false;
+    }
+
+    // 对于股票指数，价格应该在合理范围内（大于1）
+    if (['cn', 'us', 'hk', 'asia', 'eu'].includes(item.category)) {
+      if (item.price < 1) {
+        console.log(`Invalid data for ${item.code}: price ${item.price} is too low for index`);
+        return false;
+      }
+    }
+
+    return true;
+  },
+
+  // 判断价格变化是否显著（用于减少历史记录写入）
+  isSignificantChange(oldPrice, newPrice, oldPercent, newPercent) {
+    if (!oldPrice || oldPrice === 0) return true;
+
+    // 价格变化超过0.01%或涨跌幅变化超过0.01%才认为显著
+    const priceChangePercent = Math.abs((newPrice - oldPrice) / oldPrice * 100);
+    const percentChange = Math.abs(newPercent - oldPercent);
+
+    return priceChangePercent > 0.01 || percentChange > 0.01;
+  },
+
   async saveToD1(db, dataArray) {
     let updatedCount = 0;
     let skippedCount = 0;
     let historyCount = 0;
 
+    // 按format_group分组，用于批量写入历史
+    const historyGroups = {};
+
     for (const item of dataArray) {
       try {
+        // 验证数据有效性，过滤异常数据
+        if (!this.isValidData(item)) {
+          console.log(`Skipping invalid data for ${item.code}`);
+          skippedCount++;
+          continue;
+        }
+
         // 计算数据哈希（用于检测数据是否真正变化）
         const dataHash = this.hashData(item.price, item.change, item.percent);
 
@@ -286,11 +339,12 @@ export default {
           // 使用REPLACE INTO（SQLite语法，相当于INSERT OR REPLACE）
           await db.prepare(`
             INSERT OR REPLACE INTO market_latest
-            (code, category, raw_data, price, change, percent, data_hash, data_timestamp, updated_at, last_change_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (code, category, format_group, raw_data, price, change, percent, data_hash, data_timestamp, updated_at, last_change_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `).bind(
             item.code,
             item.category,
+            item.formatGroup,
             item.rawData,
             item.price,
             item.change,
@@ -303,32 +357,44 @@ export default {
 
           updatedCount++;
 
-          // 如果数据真正变化，写入历史表
-          if (updateDecision.dataChanged) {
-            try {
-              await db.prepare(`
-                INSERT INTO market_history
-                (code, category, raw_data, price, change, percent, data_timestamp)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-              `).bind(
-                item.code,
-                item.category,
-                item.rawData,
-                item.price,
-                item.change,
-                item.percent,
-                now
-              ).run();
-              historyCount++;
-            } catch (histError) {
-              console.error(`Error saving history for ${item.code}:`, histError);
+          // 如果数据真正变化且应该写入历史，收集到分组中
+          if (updateDecision.dataChanged && updateDecision.shouldWriteHistory) {
+            const group = item.formatGroup;
+            if (!historyGroups[group]) {
+              historyGroups[group] = { codes: [], prices: [], changes: [], percents: [], timestamp: now };
             }
+            historyGroups[group].codes.push(item.code);
+            historyGroups[group].prices.push(item.price.toFixed(4));
+            historyGroups[group].changes.push(item.change.toFixed(4));
+            historyGroups[group].percents.push(item.percent.toFixed(4));
           }
         } else {
           skippedCount++;
         }
       } catch (error) {
         console.error(`Error saving ${item.code}:`, error);
+      }
+    }
+
+    // 批量写入历史记录（按format_group聚合）
+    for (const [group, data] of Object.entries(historyGroups)) {
+      try {
+        await db.prepare(`
+          INSERT INTO market_history
+          (format_group, codes, prices, changes, percents, data_timestamp)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `).bind(
+          group,
+          data.codes.join(','),
+          data.prices.join(','),
+          data.changes.join(','),
+          data.percents.join(','),
+          data.timestamp
+        ).run();
+        historyCount += data.codes.length;
+        console.log(`Batch saved history for group ${group}: ${data.codes.length} items`);
+      } catch (histError) {
+        console.error(`Error batch saving history for group ${group}:`, histError);
       }
     }
 
@@ -351,12 +417,12 @@ export default {
   async shouldUpdateData(db, item, dataHash) {
     try {
       const result = await db.prepare(
-        'SELECT data_hash, updated_at, last_change_at FROM market_latest WHERE code = ?'
+        'SELECT data_hash, updated_at, last_change_at, price, percent, format_group FROM market_latest WHERE code = ?'
       ).bind(item.code).first();
 
       if (!result) {
         // 没有记录，需要插入
-        return { shouldUpdate: true, dataChanged: true, lastChangeAt: null };
+        return { shouldUpdate: true, dataChanged: true, shouldWriteHistory: true, lastChangeAt: null };
       }
 
       const now = new Date();
@@ -368,31 +434,45 @@ export default {
       // 检查数据哈希是否变化
       const dataChanged = result.data_hash !== dataHash;
 
-      // 规则1: 数据有变化，立即更新
+      // 规则1: 数据有变化
       if (dataChanged) {
-        return { shouldUpdate: true, dataChanged: true, lastChangeAt: result.last_change_at };
+        // 检查是否为显著变化
+        const significantChange = this.isSignificantChange(
+          result.price, item.price, result.percent, item.percent
+        );
+
+        // 开盘后前2小时采用时间采样：每5分钟记录一次历史
+        const shouldSample = timeSinceChange < 7200 && timeSinceUpdate < 300;
+        const shouldWriteHistory = significantChange && !shouldSample;
+
+        return {
+          shouldUpdate: true,
+          dataChanged: true,
+          shouldWriteHistory,
+          lastChangeAt: result.last_change_at
+        };
       }
 
-      // 规则2: 数据未变化但距离上次更新不到60秒，跳过（避免频繁写入）
-      if (timeSinceUpdate < 60) {
-        return { shouldUpdate: false, dataChanged: false, lastChangeAt: result.last_change_at };
+      // 规则2: 数据未变化但距离上次更新不到5分钟，跳过（减少频繁写入）
+      if (timeSinceUpdate < 300) {
+        return { shouldUpdate: false, dataChanged: false, shouldWriteHistory: false, lastChangeAt: result.last_change_at };
       }
 
-      // 规则3: 数据未变化超过30分钟，认为已收盘，跳过（避免收盘后重复记录）
-      if (timeSinceChange > 1800) {
-        return { shouldUpdate: false, dataChanged: false, lastChangeAt: result.last_change_at };
+      // 规则3: 数据未变化超过1小时，认为已收盘，跳过（避免收盘后重复记录）
+      if (timeSinceChange > 3600) {
+        return { shouldUpdate: false, dataChanged: false, shouldWriteHistory: false, lastChangeAt: result.last_change_at };
       }
 
-      // 规则4: 数据未变化但距离上次更新超过5分钟，进行心跳更新（保持数据新鲜度）
-      if (timeSinceUpdate >= 300) {
-        return { shouldUpdate: true, dataChanged: false, lastChangeAt: result.last_change_at };
+      // 规则4: 数据未变化但距离上次更新超过30分钟，进行心跳更新（保持数据新鲜度）
+      if (timeSinceUpdate >= 1800) {
+        return { shouldUpdate: true, dataChanged: false, shouldWriteHistory: false, lastChangeAt: result.last_change_at };
       }
 
-      return { shouldUpdate: false, dataChanged: false, lastChangeAt: result.last_change_at };
+      return { shouldUpdate: false, dataChanged: false, shouldWriteHistory: false, lastChangeAt: result.last_change_at };
     } catch (error) {
       console.error('Error in shouldUpdateData:', error);
       // 出错时默认更新
-      return { shouldUpdate: true, dataChanged: true, lastChangeAt: null };
+      return { shouldUpdate: true, dataChanged: true, shouldWriteHistory: true, lastChangeAt: null };
     }
   },
 
@@ -410,22 +490,45 @@ export default {
     }
   },
 
-  // 查询历史数据
+  // 查询历史数据（从聚合表中解析）
   async queryHistoryData(db, code, days = 7, limit = 1000) {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
       const startDateStr = startDate.toISOString();
 
+      // 获取code的format_group
+      const formatGroup = getFormatGroup(code);
+
+      // 查询该分组的历史记录
       const results = await db.prepare(`
-        SELECT price, change, percent, data_timestamp, created_at
+        SELECT codes, prices, changes, percents, data_timestamp, created_at
         FROM market_history
-        WHERE code = ? AND data_timestamp >= ?
+        WHERE format_group = ? AND data_timestamp >= ?
         ORDER BY data_timestamp DESC
         LIMIT ?
-      `).bind(code, startDateStr, limit).all();
+      `).bind(formatGroup, startDateStr, limit).all();
 
-      return results.results || [];
+      // 解析聚合数据，提取目标code的历史
+      const history = [];
+      for (const row of (results.results || [])) {
+        const codes = row.codes.split(',');
+        const idx = codes.indexOf(code);
+        if (idx !== -1) {
+          const prices = row.prices.split(',');
+          const changes = row.changes.split(',');
+          const percents = row.percents.split(',');
+          history.push({
+            price: parseFloat(prices[idx]),
+            change: parseFloat(changes[idx]),
+            percent: parseFloat(percents[idx]),
+            data_timestamp: row.data_timestamp,
+            created_at: row.created_at
+          });
+        }
+      }
+
+      return history;
     } catch (error) {
       console.error('Error querying history data:', error);
       throw error;
